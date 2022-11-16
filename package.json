@@ -1,0 +1,42 @@
+{
+  "name": "cubicados-api-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app/server.js"
+  },
+  "keywords": [],
+  "author": "zayko",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.0.0-rc.11",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.5",
+    "dotenv": "^16.0.1",
+    "expo-server-sdk": "^3.6.0",
+    "express": "^4.18.1",
+    "firebase-admin": "^11.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "moment": "^2.29.4",
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.8",
+    "pretty": "^2.0.0",
+    "pug": "^3.0.2",
+    "puppeteer": "^14.4.1",
+    "sequelize": "^6.21.0",
+    "serve-favicon": "^2.5.0",
+    "transbank-sdk": "^3.0.2",
+    "underscore": "^1.13.4",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16",
+    "sequelize-cli": "^6.4.1"
+  }
+}

@@ -1,0 +1,32 @@
+extends layout
+
+block body
+    .row
+        .col.m12.center-align
+            h3(class="error-title" ) Datos de Transacción
+                table.table.table-striped(class='table-commit' id='table-commit' align='center')
+                    tr
+                        th Orden de compra
+                        td(id='ordenCompra')=viewData.commitResponse.buy_order
+                    tr(style='display: none')    
+                        th Nro. de Sessión
+                        td(id='sessionId')=viewData.commitResponse.session_id
+                    tr 
+                        th Fecha transacción
+                        td=moment(viewData.commitResponse.transaction_date).format('DD-MM-YYYY')
+                    tr 
+                        th Hora transacción
+                        td=moment(viewData.commitResponse.transaction_date).format('HH:mm:ss')    
+                    tr
+                        th Monto 
+                        td(id='monto')=viewData.commitResponse.amount   
+                    tr 
+                        th Estado de transacción
+                            -if (viewData.commitResponse.response_code === 0) 
+                                td Autorizada   
+    .row
+        .col.m12.center-align
+            .col.s6
+                form(action="/api/webpay/finalizar" method="post")
+                    button(type="submit" class='button-status').btn.waves-effect.waves-light.pink.white-text
+                        h5 Finalizar                       

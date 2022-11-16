@@ -1,0 +1,21 @@
+extends template
+
+block step
+  .row
+    .col.m12.center-align
+      h3(class="error-title" ) Datos de Transacción
+        table.table.table-striped(class='error-table' id='table-error' align='center')
+          tr
+            th Orden de compra
+            td(id='ordenCompra')=viewData.tbkOrdenCompra
+
+          tr(style='display: none')        
+            th Nro. de Sessión
+            td=viewData.tbkIdSesion
+
+block actions
+  .row
+    .col.m12.center-align
+      form(action="/api/webpay/exit" method="post")
+        button(type="submit" class='button-status').btn.waves-effect.waves-light.pink.white-text
+          h5 Finalizar

@@ -1,0 +1,113 @@
+[{
+        "type": "STATE",
+        "id": "2",
+        "code": "2",
+        "politicalId": "70b1febe-fd2c-4ae7-bdb6-167976826b1a",
+        "name": "ANTOFAGASTA"
+    },
+    {
+        "type": "STATE",
+        "id": "15",
+        "code": "15",
+        "politicalId": "6d6996df-6428-4a38-91e8-735b8fe727ad",
+        "name": "ARICA Y PARINACOTA"
+    },
+    {
+        "type": "STATE",
+        "id": "3",
+        "code": "3",
+        "politicalId": "b83e9641-cc4e-48c0-8638-42f1a4c9d3db",
+        "name": "ATACAMA"
+    },
+    {
+        "type": "STATE",
+        "id": "11",
+        "code": "11",
+        "politicalId": "21999b34-d273-4b67-9ae1-ad5880644ea4",
+        "name": "AYSÉN DEL GENERAL CARLOS IBÁÑEZ DEL CAMPO"
+    },
+    {
+        "type": "STATE",
+        "id": "8",
+        "code": "8",
+        "politicalId": "9573e7f4-77d7-4c1b-8d75-e9dc2bdcc91b",
+        "name": "BIOBÍO"
+    },
+    {
+        "type": "STATE",
+        "id": "4",
+        "code": "4",
+        "politicalId": "73c626ec-e662-4777-83a2-576f60963d87",
+        "name": "COQUIMBO"
+    },
+    {
+        "type": "STATE",
+        "id": "9",
+        "code": "9",
+        "politicalId": "d86e5095-af2e-4da3-b3ee-27ef2bad8772",
+        "name": "LA ARAUCANÍA"
+    },
+    {
+        "type": "STATE",
+        "id": "6",
+        "code": "6",
+        "politicalId": "1bf237ff-3120-4fd6-b6ac-7c74e4cb9b70",
+        "name": "LIBERTADOR GENERAL BERNARDO O'HIGGINS"
+    },
+    {
+        "type": "STATE",
+        "id": "10",
+        "code": "10",
+        "politicalId": "5e89ced2-fde6-465e-8d25-527d83acb41d",
+        "name": "LOS LAGOS"
+    },
+    {
+        "type": "STATE",
+        "id": "14",
+        "code": "14",
+        "politicalId": "f8351488-0741-4c3f-a455-5008a7f81e57",
+        "name": "LOS RÍOS"
+    },
+    {
+        "type": "STATE",
+        "id": "12",
+        "code": "12",
+        "politicalId": "26a00517-eb4e-46ea-bf0d-438d7f075863",
+        "name": "MAGALLANES Y DE LA ANTÁRTICA CHILENA"
+    },
+    {
+        "type": "STATE",
+        "id": "7",
+        "code": "7",
+        "politicalId": "77d9e536-ce23-436f-aa4f-5799edccd004",
+        "name": "MAULE"
+    },
+    {
+        "type": "STATE",
+        "id": "13",
+        "code": "13",
+        "politicalId": "a768f0a2-bb5d-4d51-8cad-03b48b25c4a4",
+        "name": "METROPOLITANA DE SANTIAGO"
+    },
+    {
+        "type": "STATE",
+        "id": "8",
+        "code": "8",
+        "politicalId": "3b7c88cb-8cd4-4510-972a-1b625479b7f4",
+        "name": "ÑUBLE"
+    },
+    {
+        "type": "STATE",
+        "id": "1",
+        "code": "1",
+        "politicalId": "38798c03-241c-44f4-bbfa-8c1264ab3fff",
+        "name": "TARAPACÁ"
+    },
+    {
+        "type": "STATE",
+        "id": "5",
+        "code": "5",
+        "politicalId": "48b4a271-8bc0-465b-bb6f-381b943ae624",
+        "name": "VALPARAÍSO"
+    }
+]

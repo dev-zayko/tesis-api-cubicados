@@ -1,0 +1,33 @@
+doctype html
+html
+  head
+    title= "Transbank SDK Nodejs"
+    link(rel='stylesheet' href='/stylesheets/style.css')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet')
+    link(rel='stylesheet' href='/stylesheets/highlight/atom-one-dark.css')
+    script(src='/javascripts/highlight.pack.js')
+    script(src='https://momentjs.com/downloads/moment.js')
+    link(rel="shortcut icon" type="image/x-icon" href="/favicon.ico")
+  nav.pink.darken-4(class='nav-header')
+    .nav-wrapper.container
+      a.brand-logo(href='/')
+        img(src='/images/tbk-nav.png' style='margin-top: 100px;' alt="Logo Transbank Developers", height=120, width=380  )
+      ul#nav-mobile.right.hide-on-med-and-down
+        li
+          a(href='/') Inicio
+        li
+          a(href='http://www.transbankdevelopers.cl' target='_blank') Transbank
+  body
+    .container
+      block content
+      block body
+      .row(style="margin-top: 60%;  display: flex; justify-content: flex-end;")
+        .col.m12.center-align
+          h4(style='color: #808080') Cubicados © #{moment().format('YYYY')}
+    script.
+      M.AutoInit();
+    script.
+      hljs.initHighlightingOnLoad();
+

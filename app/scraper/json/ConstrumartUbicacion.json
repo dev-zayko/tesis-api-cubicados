@@ -1,0 +1,61 @@
+[{
+        "region": "XIII REGIÓN METROPOLITANA DE SANTIAGO",
+        "ciudad": "ESTACION CENTRAL"
+    },
+    {
+        "region": "VII MAULE",
+        "ciudad": "TALCA"
+    },
+    {
+        "region": "X LOS LAGOS",
+        "ciudad": "PUERTO MONTT"
+    },
+    {
+        "region": "XIII REGIÓN METROPOLITANA DE SANTIAGO",
+        "ciudad": "SANTIAGO"
+    },
+    {
+        "region": "II ANTOFAGASTA",
+        "ciudad": "CALAMA"
+    },
+    {
+        "region": "XIII REGIÓN METROPOLITANA DE SANTIAGO",
+        "ciudad": "COLINA"
+    },
+    {
+        "region": "X LOS LAGOS",
+        "ciudad": "OSORNO"
+    },
+    {
+        "region": "I TARAPACÁ",
+        "ciudad": "IQUIQUE"
+    },
+    {
+        "region": "IX LA ARAUCANÍA",
+        "ciudad": "TEMUCO"
+    },
+    {
+        "region": "IV COQUIMBO",
+        "ciudad": "LA SERENA"
+    },
+    {
+        "region": "V VALPARAÍSO",
+        "ciudad": "QUILPUE"
+    },
+    {
+        "region": "VI O'HIGGINS",
+        "ciudad": "RANCAGUA"
+    },
+    {
+        "region": "V VALPARAÍSO",
+        "ciudad": "SAN ANTONIO"
+    },
+    {
+        "region": "XIII REGIÓN METROPOLITANA DE SANTIAGO",
+        "ciudad": "BUIN"
+    },
+    {
+        "region": "IV COQUIMBO",
+        "ciudad": "OVALLE"
+    }
+]
