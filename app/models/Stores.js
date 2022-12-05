@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: true,
             defaultValue: DataTypes.NOW
-        }
+        },
+        deleted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true
+        },
     }, {
         timestamps: false,
         createdAt: false,

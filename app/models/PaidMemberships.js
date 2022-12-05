@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER(6),
             allowNull: false
         },
-        sessionId: {
+        session_id: {
             type: DataTypes.TEXT,
             allowNull: true
         },

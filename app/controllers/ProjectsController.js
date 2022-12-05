@@ -16,18 +16,18 @@ module.exports = {
         });
     }, async costAdjust(req, res, next) {
         let total = 0;
-        (req.habCostoTotales).map((item) => {
-            total += parseFloat(item.total)
+        (req.roomsCostTotal).map((item) => {
+            total += parseInt(item.total)
         });
         await Projects.update({
-            costoTotal: total
+            total_price: total
         }, {
             where: {
-                idProyecto: req.proyectos.idProyecto
+                id: req.project.id
             },
         }).then((response) => {
             res.send({
-                estado: response
+                status: response
             });
         }).catch(error => {
             res.sendStatus(500);
@@ -46,7 +46,7 @@ module.exports = {
                         msg: 'El proyecto no ha sido encontrado'
                     });
                 } else {
-                    // req.habCostoTotales = req.habCostoTotales;
+                    req.roomsCostTotal = req.roomsCostTotal;
                     req.project = projects;
                     next();
                 }

@@ -1,22 +1,18 @@
 const {
-    Material
+    Materials
 } = require('../models/index')
 
 module.exports = {
     async store(req, res) {
-
-        product = JSON.parse(req.query.producto);
-        precio = ((product.precio).replace('$', '')).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-        await Material.create({
-                imagen: product.imagen,
-                marca: product.marca,
-                titulo: product.titulo,
-                precio: precio,
-                despacho: product.despacho,
-                retiro: product.retiro,
-                idTienda: req.query.idTienda,
-                idComuna: req.query.idComuna
-            })
+        let price = ((req.body.price).replace('$', '').replace('.', ''));
+        await Materials.create({
+            image: req.body.image,
+            trademark: req.body.tradeMark,
+            title: req.body.title,
+            price: price,
+            store_id: req.body.idStore,
+            commune_id: req.body.idCommune
+        })
             .then(response => {
                 res.send({
                     status: 'success',

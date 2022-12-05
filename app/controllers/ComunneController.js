@@ -19,35 +19,42 @@ module.exports = {
         let reg = new RegExp(req.name, 'gi');
         let result = [];
         req.communes.map((item) => {
-            if (item.nombre.match(reg) !== null) {
+            if (item.name.match(reg) !== null) {
                 result.push({
                     id: item.id,
-                    name:  item.name
+                    name: item.name
                 });
             }
         });
-        res.send(result);
+        res.send({
+            status: 'success',
+            data: result
+        });
     },
     async getById(req, res) {
-        const idRegion = req.params.idRegion
+        const idRegion = req.body.idRegion;
         await Communes.findAll({
-                where: {
-                    region_id: idRegion
-                }
-            })
+            where: {
+                region_id: idRegion
+            }
+        })
             .then(communes => {
-                if (communes.length === 0) {
+                if (!communes) {
                     res.send({
-                        status: 'empty'
-                    })
+                        status: 'empty',
+                        message: 'No hay communas'
+                    });
                 } else {
-                    res.send(communes);
+                    res.send({
+                        status: 'success',
+                        data: communes
+                    });
                 }
             })
             .catch(err => {
                 res.status(500).send({
                     error: err,
-                    message: 'Error al obtener proyecto asociado al Usuario con el id=' + idUsuario
+                    message: 'Error al obtener comunas'
                 });
             });
     }

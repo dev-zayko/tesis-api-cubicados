@@ -1,7 +1,7 @@
 const {
-    Membresias,
-    Usuarios,
-    MembresiasPagadas
+    Memberships,
+    User,
+    PaidMemberships
 } = require('../models/index');
 const {
     Op
@@ -13,12 +13,12 @@ const moment = require('moment');
 
 module.exports = {
     async getAll(req, res, next) {
-        await Membresias.findAll({
+        await Memberships.findAll({
             where: {
-                idMembresia: {
-                    [Op.gt]: 1
+                id: {
+                    [Op.gt]: 1,
                 },
-                vigente: true
+                deleted: false
             }
         }).then((response) => {
             res.send({
@@ -29,18 +29,17 @@ module.exports = {
         });
     },
     async upMembership(req, res, next) {
-        let idUsuario = req.user.idUsuario;
-        let idMembresia = req.idMembresia;
-        await Usuarios.update({
-            idMembresia: idMembresia,
-            idEstadoUsuario: 1,
-            fechaMembresia: req.fechaMembresia
+        let idUser = req.user.id;
+        let idMembership = req.idMembership;
+        await User.update({
+            membership_id: idMembership,
+            user_status_id: 1,
         }, {
             where: {
-                idUsuario: idUsuario
+                id: idUser
             }
         }).then((response) => {
-        
+
             next();
         }).catch((err) => {
             console.log(err);

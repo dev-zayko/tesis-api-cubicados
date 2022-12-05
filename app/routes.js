@@ -11,9 +11,9 @@ const ProjectsController = require("./controllers/ProjectsController");
 const RegionController = require('./controllers/RegionController');
 const Scraping = require('./scraper/Scraping');
 const ConstructionTypeController = require('./controllers/ConstructionTypeController');
-const TiendaController = require('./controllers/TiendaController');
+const StoreController = require('./controllers/StoreController');
 const WebPayController = require('./controllers/WebPayController');
-const MembresiaController = require('./controllers/MembresiaController');
+const MembershipsController = require('./controllers/MembershipsController');
 const MembresiaPagadaController = require('./controllers/MembresiaPagadaController');
 const NotificactionController = require('./controllers/NotificactionController');
 // Home
@@ -62,7 +62,7 @@ router.post('/api/mail/confirm', async (req, res) => {
 //#region Comunas
 router.get('/api/communes/all', CommuneController.getAll);
 router.post('/api/communes/match', CommuneController.getAll, CommuneController.matchingCommunes);
-router.post('/api/communes/get/:idRegion', CommuneController.getById);
+router.post('/api/communes/get', CommuneController.getById);
 //#endregion
 
 //#region Construcción
@@ -96,23 +96,23 @@ router.post('/api/materials/store', MaterialController.store);
 //#endregion
 
 //#region Membresias
-router.get('/api/membership/all', MembresiaController.getAll);
-router.post('/api/membership/days', auth, MembresiaController.restDays);
+router.get('/api/membership/all', MembershipsController.getAll);
+router.post('/api/membership/days', auth, MembershipsController.restDays);
 //#endregion
 
 //#region membresias_pagadas
 router.post('/api/membership/paid/all', auth, MembresiaPagadaController.getAll);
-router.post('/api/membership/paid/store', auth, MembresiaPagadaController.store, MembresiaController.addDate, MembresiaController.upMembership, NotificactionController.sendNotification);
+router.post('/api/membership/paid/store', auth, MembresiaPagadaController.store, MembershipsController.addDate, MembershipsController.upMembership, NotificactionController.sendNotification);
 //#endregion
 //#region Region
 router.get('/api/region/all', RegionController.getAll);
 router.get('/api/region/construmart', RegionController.getRegionConstrumart);
-router.post('/api/ciudad/construmart', RegionController.getCiudadConstrumart);
-router.post('/api/ciudad/sodimac', RegionController.getCiudadSodimac);
+router.post('/api/city/construmart', RegionController.getCiudadConstrumart);
+router.post('/api/city/sodimac', RegionController.getCiudadSodimac);
 //#endregion
 
 //# region tienda
-router.get('/api/store/all', TiendaController.getAll);
+router.get('/api/store/all', StoreController.getAll);
 //#enregion
 
 //#region TipoConstruccion
@@ -120,8 +120,8 @@ router.get('/api/construction/type/all', ConstructionTypeController.getAll);
 //#endregion
 
 //#region Scrap
-router.post('/api/scrap/sodimac/producto', auth, Scraping.tipoProductos, Scraping.scrapProductoSodimac);
-router.post('/api/scrap/construmart/producto', auth, Scraping.tipoProductos, Scraping.scrapProductoConstrumart);
+router.post('/api/scrap/sodimac/product', auth, Scraping.tipoProductos, Scraping.scrapProductoSodimac);
+router.post('/api/scrap/construmart/product', auth, Scraping.tipoProductos, Scraping.scrapProductoConstrumart);
 //#endregion
 
 //#region count

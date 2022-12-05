@@ -67,16 +67,16 @@ module.exports = {
             description: req.body.description,
             construction_id: req.body.idConstruction,
             room_id: req.body.idRoom,
-            material_id: req.body.material_id
+            material_id: req.body.idMaterial
         })
             .then(response => {
-                req.cubage = response;
-                req.totalMaterials = req.body.costTotal;
+                req.cubages = response;
+                req.totalMaterials = req.body.totalCost;
                 next();
             }).catch(err => {
                 res.status(500).send({
                     status: 'error',
-                    error: err,
+                    error: err.message,
                     message: 'Ha ocurrido un error al guardar la cubicacion'
                 })
             });
@@ -86,7 +86,8 @@ module.exports = {
         const idRoom = req.body.idRoom
         await Cubages.findAll({
             where: {
-                room_id: idRoom
+                room_id: idRoom,
+                deleted: false,
             },
             include: [{
                 model: Materials,
@@ -124,6 +125,7 @@ module.exports = {
                 if (cubages.length === 0) {
                     res.send({
                         status: 'empty',
+                        data: 0,
                         count: cubages.length
                     })
                 } else {

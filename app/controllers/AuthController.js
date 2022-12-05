@@ -25,11 +25,11 @@ module.exports = {
                 as: 'memberships',
                 required: true
             },
-                {
-                    model: UserStatus,
-                    as: 'user_status',
-                    required: true
-                }
+            {
+                model: UserStatus,
+                as: 'user_status',
+                required: true
+            }
             ],
             where: {
                 email: req.body.email
@@ -150,19 +150,33 @@ module.exports = {
                 as: 'memberships',
                 required: true
             },
-                {
-                    model: UserStatus,
-                    as: 'user_status',
-                    required: true
-                }
+            {
+                model: UserStatus,
+                as: 'user_status',
+                required: true
+            }
             ],
             where: {
                 id: id
             }
-        }).then((response) => {
-            res.send({
-                data: response
+        }).then((user) => {
+            let verified;
+            let token = jwt.sign({
+                user: user
+            }, authConfig.secret, {
+                expiresIn: authConfig.expires
             });
+            if (user.email_verified_at === null) {
+                verified = false
+            } else {
+                verified = true
+            }
+            res.json({
+                status: 'isClient',
+                verified: verified,
+                token: token
+            });
+
         }).catch((err) => {
             console.log(err);
             res.sendStatus(500);
@@ -201,9 +215,8 @@ module.exports = {
     },
     async sendEmailVerification(req, res, next) {
         try {
-            console.log(req.body.email);
             await transporter.sendMail({
-                from: 'Cubicados Verificacion <cubicadosDev@gmail.com>',
+                from: 'Cubicados Verificación <notificaciones@cubicados.cl>',
                 to: req.body.email,
                 subject: 'Verifica tu cuenta',
                 html: pug.renderFile('app/views/email-verification.pug', {name: req.body.name, token: req.body.token}),

@@ -1,15 +1,24 @@
-const {Tienda} = require('../models/index')
+const {Stores} = require('../models/index')
 
 module.exports = {
 
     async getAll(req, res) {
-        await Tienda.findAll({
+        await Stores.findAll({
             where: {
-                vigente: true
+                deleted: false
             }
         })
-            .then(tienda => {
-                res.send(tienda);
+            .then(stores => {
+                if (!stores) {
+                    res.send({
+                        status: 'empty'
+                    });
+                } else {
+                    res.send({
+                        status: 'success',
+                        data: stores
+                    });
+                }
             })
             .catch(err => {
                 res.status(500).send({
@@ -19,8 +28,8 @@ module.exports = {
     },
     async store(req, res) {
         await Tienda.create({
-                nombre: req.body.nombre,
-            })
+            nombre: req.body.nombre,
+        })
             .then(response => {
                 res.send({
                     status: 'success',

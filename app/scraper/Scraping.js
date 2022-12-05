@@ -8,40 +8,33 @@ const _ = require("underscore");
 
 module.exports = {
     async tipoProductos(req, res, next) {
-        switch (req.query.tipoProducto) {
-            case 'Esmalte al agua':
+        let typeProduct = req.body.typeProduct;
+        req.region = req.body.region;
+        req.local = req.body.local;
+        switch (typeProduct) {
+            case 'Esmalte al Agua':
                 req.urlProductoSodimac = process.env.SODIMAC_P_ESMALTE_URL;
                 req.urlProducto = process.env.CONSTRUMART_P_ESMALTE_URL;
-                req.region = req.query.region;
-                req.local = req.query.local;
                 next();
                 break;
             case 'Latex':
                 req.urlProductoSodimac = process.env.SODIMAC_P_LATEX_URL;
                 req.urlProducto = process.env.CONSTRUMART_P_LATEX_URL
-                req.region = req.query.region;
-                req.local = req.query.local;
                 next();
                 break;
             case 'Esmalte sintético':
                 req.urlProductoSodimac = process.env.SODIMAC_P_SINTETICO_URL;
                 req.urlProducto = process.env.CONSTRUMART_P_SINTETICO_URL;
-                req.region = req.query.region;
-                req.local = req.query.local;
                 next();
                 break;
             case 'Óleo':
                 req.urlProductoSodimac = process.env.SODIMAC_P_OLEO_URL;
                 req.urlProducto = process.env.CONSTRUMART_P_OLEO_URL;
-                req.region = req.query.region;
-                req.local = req.query.local;
                 next();
                 break;
             case 'Cemento':
                 req.urlProductoSodimac = process.env.SODIMAC_CEMENTO_URL
                 req.urlProducto = process.env.CONSTRUMART_CEMENTO_URL
-                req.region = req.query.region;
-                req.local = req.query.local;
                 next();
                 break;
         }
@@ -54,76 +47,95 @@ module.exports = {
      */
     async scrapProductoSodimac(req, res, next) {
         try {
-            let url = req.urlProductoSodimac
+            let url = req.urlProductoSodimac;
             const browser = await puppeteer.launch({
                 "headless": true
             });
-            let datos = [];
+            let dataProduct = [];
+            const viewPort = {width: 800, height: 1000};
             const page = await browser.newPage();
+            await page.setViewport(viewPort);
             let region = req.region;
-            let ciudad = req.local;
+            let city = req.local;
             await page.goto(url);
-            let sc = new SodimacCookie(region, ciudad);
+            let sc = new SodimacCookie(region, city);
             await page.setCookie(...await sc.init());
             await page.goto(url);
             await page.cookies(url);
-            let urlNueva = page.url();
+            let urlNew = page.url();
             const manyData = async function () {
-                datos = await page.evaluate(async (region, ciudad) => {
+                dataProduct = await page.evaluate(async (region, city) => {
                     let results = [];
                     let items = document.querySelectorAll('.jsx-4001457643.search-results-2-grid.grid-pod');
-                    items.forEach((item) => {
+                    items.forEach((item, index) => {
                         results.push({
-                            linkProducto: item.querySelectorAll('.jsx-3128226947')[1].getAttribute('href'),
-                            marca: item.querySelectorAll('.jsx-1327784995')[5].innerText,
-                            titulo: item.querySelectorAll('.jsx-1327784995')[7].innerText,
-                            precio: item.querySelectorAll('.jsx-1327784995')[9].children[0].innerText.replace('$ ', '$'),
-                            imagen: item.querySelectorAll('.jsx-3128226947')[1].children[0].getAttribute('src'),
-                            tienda: 'Sodimac',
+                            linkProduct: item.querySelectorAll('.jsx-3128226947')[1].getAttribute('href'),
+                            tradeMark: item.querySelectorAll('.jsx-1327784995')[5].innerText,
+                            title: item.querySelectorAll('.jsx-1327784995')[7].innerText,
+                            price: item.querySelectorAll('.jsx-1327784995')[9].children[0].innerText.replace('$ ', '$'),
+                            image: item.querySelectorAll('.jsx-3128226947')[1].children[0].getAttribute('src'),
+                            store: 'Sodimac',
                             region: region,
-                            ciudad: ciudad
+                            city: city,
                         });
                     });
                     return results;
-                }, region, ciudad);
-                res.json(
-                    datos
-                );
+                }, region, city);
+                res.json({
+                    data: dataProduct
+                });
             };
             const onlyData = async function (url) {
-                datos = await page.evaluate(async (url, region, ciudad) => {
+                dataProduct = await page.evaluate(async (url, region, city) => {
                     let results = [];
-                    let items = document.querySelectorAll('.jsx-133031097.productContainer');
+                    let items = document.querySelectorAll('.jsx-2809497520.pdp-container');
                     items.forEach((item) => {
-                        results.push(...{
-                            linkProducto: url,
-                            marca: item.querySelector('.jsx-3572928369.product-brand-link').innerText,
-                            titulo: item.querySelector('.jsx-3686231685.product-name.fa--product-name').innerText,
-                            precio: item.querySelector('.jsx-2797633547.cmr-icon-container').innerText.replace('$ ', '$'),
-                            imagen: item.querySelector('#testId-pod-image-SodimacCL_3267326_01').getAttribute('src'),
-                            tienda: 'Sodimac',
+                        results.push({
+                            linkProduct: url,
+                            tradeMark: item.querySelector('.jsx-1874573512.product-brand.fa--brand.false').innerText,
+                            title: item.querySelector('.jsx-1442607798.product-name.fa--product-name.false').innerText,
+                            price: item.querySelector('.jsx-2797633547.cmr-icon-container').innerText.replace('$ ', '$'),
+                            image: item.querySelector('#testId-pod-image-SodimacCL_3316939_00')?.getAttribute('src'),
+                            store: 'Sodimac',
                             region: region,
-                            ciudad: ciudad
+                            city: city
                         });
                     });
                     return results;
-                }, url, region, ciudad);
-                res.json(
-                    datos
-                );
+                }, url, region, city);
+
+                if (Object.keys(dataProduct[0]).length === 7) {
+                    res.json({
+                        status: 'empty',
+                        data: 0
+                    });
+                } else {
+                    res.json({
+                        status: 'success',
+                        data: dataProduct
+                    });
+                }
+
             }
-            await page.exposeFunction('onlyData', onlyData);
             await page.exposeFunction('manyData', manyData);
-            if (urlNueva !== url) {
-                await onlyData(urlNueva), region, ciudad;
-            } else if (urlNueva === url) {
-                await manyData(region, ciudad);
+            await page.exposeFunction('onlyData', onlyData);
+            if (urlNew !== url) {
+                await onlyData(urlNew, region, city);
+            } else if (urlNew === url) {
+                if (req.body.typeProduct !== 'Cemento') {
+                    await page.$eval('img[class="Footer-module_security-icon__3WQRT"]',
+                        e => {e.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})});
+                    await page.waitFor(1000);
+                    await page.$eval('button[id="testId-pagination-bottom-arrow-right"]',
+                        e => {e.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})});
+                    await page.waitFor(1000);
+                }
+                await manyData(region, city);
             }
             await page.close();
             await browser.close();
 
         } catch (error) {
-            console.log(error)
             res.send({
                 status: 'error',
                 message: 'Parece que se les acabo el stock',
@@ -142,16 +154,16 @@ module.exports = {
             const browser = await puppeteer.launch({
                 "headless": true
             });
-            let datos = [];
+            let dataProduct = [];
             let url = req.urlProducto
             const page = await browser.newPage();
             //region local, centro esto valores se recibiran por medio del request
             let region = ''
-            let local = '';
+            let city = '';
             region = req.region;
-            local = req.local;
+            city = req.local;
             await page.goto(url);
-            let sc = new construmartCookie(region, local);
+            let sc = new construmartCookie(region, city);
             let cookie = await sc.init();
             if (cookie === 'error') {
                 res.json({
@@ -159,54 +171,54 @@ module.exports = {
                     message: 'Esta tienda no se encuentra en tu ubicación'
                 })
             } else {
+
                 await page.setCookie(...await sc.init());
                 await page.goto(url);
                 await page.waitForTimeout(4000);
                 await page.cookies(url);
                 await page.waitForTimeout(6000);
-                datos = await page.evaluate(async (region, local) => {
+                dataProduct = await page.evaluate(async (region, city) => {
                     let results = [];
                     let items = document.querySelectorAll('.vtex-search-result-3-x-galleryItem.vtex-search-result-3-x-galleryItem--small.pa4');
                     items.forEach((item) => {
-                        let link = item.querySelector('.vtex-product-summary-2-x-clearLink.vtex-product-summary-2-x-clearLink--shelf-home-desktop.h-100.flex.flex-column').getAttribute('href');
-                        let marca = item.querySelector('.vtex-product-summary-2-x-productBrandContainer').innerText;
-                        let titulo = item.querySelector('.vtex-product-summary-2-x-productNameContainer.mv0.vtex-product-summary-2-x-nameWrapper.overflow-hidden.c-on-base.f5').innerText;
-                        let imagen = item.querySelector('.vtex-product-summary-2-x-imageNormal.vtex-product-summary-2-x-image').getAttribute('src');
-                        let precio = item.querySelector('.vtex-add-to-cart-button-0-x-buttonText').innerText === 'ICON' ?
+                        let linkProduct = item.querySelector('.vtex-product-summary-2-x-clearLink.vtex-product-summary-2-x-clearLink--shelf-home-desktop.h-100.flex.flex-column').getAttribute('href');
+                        let tradeMark = item.querySelector('.vtex-product-summary-2-x-productBrandContainer').innerText;
+                        let title = item.querySelector('.vtex-product-summary-2-x-productNameContainer.mv0.vtex-product-summary-2-x-nameWrapper.overflow-hidden.c-on-base.f5').innerText;
+                        let image = item.querySelector('.vtex-product-summary-2-x-imageNormal.vtex-product-summary-2-x-image').getAttribute('src');
+                        let price = item.querySelector('.vtex-add-to-cart-button-0-x-buttonText').innerText === 'AGREGAR' ?
                             item.querySelector('.vtex-product-summary-2-x-currencyContainer.currencynode-hasnoperformance').innerText :
                             item.querySelector('.vtex-add-to-cart-button-0-x-buttonText').innerText === 'SIN STOCK' && 'SIN STOCK';
-
-                        let retiro = item.querySelectorAll('.construmartcl-custom-availability-display-0-x-iconsContainer')[0].children[0].children[0].getAttribute('src') ===
-                            'https://construmartcl.vtexassets.com/_v/public/assets/v1/published/construmartcl.custom-availability-display@0.0.30/public/react/5bee43fdc39b48e56e793482c120d939.svg' ?
-                            'No disponible' : 'Disponible para retiro';
-
-                        let despacho = item.querySelectorAll('.construmartcl-custom-availability-display-0-x-iconsContainer')[0].children[1].children[0].getAttribute('src') ===
-                            'https://construmartcl.vtexassets.com/_v/public/assets/v1/published/construmartcl.custom-availability-display@0.0.30/public/react/cac8e743f8e575edf9dda18311714292.svg' ?
-                            'No disponible' : 'Disponible para despacho';
                         //document.querySelectorAll(".construmartcl-custom-availability-display-0-x-iconsContainer")[0].children[1].children[0].getAttribute('src')
-                        results.push({
-                            linkProducto: 'https://www.construmart.cl' + link,
-                            marca: marca,
-                            titulo: titulo,
-                            imagen: imagen,
-                            precio: precio,
-                            retiro: retiro,
-                            despacho: despacho,
-                            tienda: 'Construmart',
-                            region: region,
-                            ciudad: local
-                        })
-                    })
+                        if (price !== 'SIN STOCK') {
+                            results.push({
+                                linkProduct: 'https://www.construmart.cl' + linkProduct,
+                                tradeMark: tradeMark,
+                                title: title,
+                                image: image,
+                                price: price,
+                                store: 'Construmart',
+                                region: region,
+                                city: city
+                            });
+                        }
+                    });
                     return results
-                }, region, local)
-
-                res.json(
-                    datos
-                );
+                }, region, city)
+                if (dataProduct.length === 0) {
+                    res.json({
+                        status: 'empty',
+                        data: 0
+                    })
+                } else {
+                    res.json({
+                        status: 'success',
+                        data: dataProduct
+                    });
+                }
                 await page.close();
                 await browser.close();
             }
-        } catch (e) {
+        } catch (error) {
             res.send({
                 status: 'error',
                 message: 'Parece que se les acabo el stock',

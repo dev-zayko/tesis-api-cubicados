@@ -23,14 +23,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        despatch: {
-            type: DataTypes.STRING(200),
-            allowNull: true,
-        },
-        pick_up: {
-          type: DataTypes.STRING(200),
-            allowNull: true
-        },
         store_id: {
             type: DataTypes.INTEGER,
             references: {
@@ -55,8 +47,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     Materials.associate = function (models) {
         Materials.hasMany(models.Cubages, {as: 'cubages', foreignKey: 'id'});
-        Materials.belongsTo(models.Stores, {as: 'stores', foreignKey:'store_id'})
-        Materials.belongsTo(models.Communes, {as: 'communes', foreignKey:'commune_id'})
+        Materials.belongsTo(models.Stores, {as: 'stores', foreignKey: 'store_id'})
+        Materials.belongsTo(models.Communes, {as: 'communes', foreignKey: 'commune_id'})
     };
     return Materials;
 };

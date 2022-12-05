@@ -32,23 +32,24 @@ module.exports = {
 
     },
     async costAdjust(req, res, next) {
-        let idHabitacion = req.cubicacion.idHabitacion;
-        let habitacionFound = await Rooms.findOne({
+        let idRoom = req.cubages.room_id;
+        let RoomFound = await Rooms.findOne({
             where: {
-                idHabitacion: idHabitacion,
-                vigente: true
+                id: idRoom,
+                deleted: false
             }
         });
-        let totalHabitacion = parseFloat(habitacionFound.total);
-        let totalMaterial = parseFloat(req.totalMaterial);
-
-        await habitacionFound.update({
-            total: (totalHabitacion + totalMaterial)
+        let totalRoom = parseInt(RoomFound.final_amount);
+        let totalMaterial = parseInt((req.totalMaterials).replace('$', '').replace('.', ''));
+        let total = (totalRoom + totalMaterial);
+        await RoomFound.update({
+            neto_amount: total,
+            final_amount: total
         }
 
         ).then((response) => {
-            req.query.action = 'next';
-            req.query.proyecto = response.idProyecto;
+            req.body.action = 'next';
+            req.body.idProject = response.project_id;
             next();
         }).catch(error => {
             res.status(500).send({

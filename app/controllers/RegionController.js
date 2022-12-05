@@ -1,16 +1,26 @@
 'use strict';
 const axios = require('axios');
 const {
-    Region
+    Regions
 } = require('../models/index')
 const ConstrumartUbicacion = require('../scraper/json/ConstrumartUbicacion.json')
 const SodimacUbicacion = require('../scraper/json/SodimacUbicacion.json');
 const SodimacCookie = require('../scraper/Cookies/SodimacCookie');
 module.exports = {
     async getAll(req, res) {
-        await Region.findAll()
+        await Regions.findAll()
             .then(region => {
-                res.send(region);
+                if (!region) {
+                    res.send({
+                        status: 'empty',
+                        message: 'No hay regiones'
+                    });
+                } else {
+                    res.send({
+                        status: 'success',
+                        data: region
+                    });
+                }
             })
             .catch(err => {
                 res.status(500).send({
@@ -33,10 +43,19 @@ module.exports = {
         sc.getCities(result).then(response => {
             response.map(item => {
                 resp.push({
-                    ciudad: item.name
+                    city: item.name
                 });
             });
-            res.send(resp);
+            if (resp.length === 0) {
+                res.send({
+                    status: 'empty'
+                })
+            } else {
+                res.send({
+                    status: 'success',
+                    data: resp
+                });
+            }
         });
 
     },
@@ -50,14 +69,21 @@ module.exports = {
         let result = [];
         regiones.map((item) => {
             if (item.region.match(regionFormat) !== null) {
-                console.log(item.ciudad)
                 result.push({
-                    ciudad: item.ciudad
+                    city: item.ciudad
                 });
             }
         });
-
-        res.send(result);
+        if (result.length === 0) {
+            res.send({
+                status: 'empty',
+            })
+        } else {
+            res.send({
+                status: 'success',
+                data: result
+            });
+        }
         //     let url = ('https://www.construmart.cl/api/dataentities/ST/search?_where=region=*&_fields=ciudad').replace('*', '"'+result+'"')
         //     await axios.get(url)
         //    .then(response => {
@@ -67,11 +93,11 @@ module.exports = {
     async getById(req, res) {
         const idRegion = req.params.idRegion
         await Region.findAll({
-                where: {
-                    idRegion: idRegion,
-                    vigente: true
-                }
-            })
+            where: {
+                idRegion: idRegion,
+                vigente: true
+            }
+        })
             .then(region => {
                 if (region.length === 0) {
                     res.send({
