@@ -1,7 +1,7 @@
 'use-strict';
 
 module.exports = (sequelize, DataTypes) => {
-    const PaidMemberships = sequelize.define("Paid_memberships", {
+    const PaidMemberships = sequelize.define("PaidMemberships", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,

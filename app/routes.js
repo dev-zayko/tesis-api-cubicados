@@ -14,7 +14,7 @@ const ConstructionTypeController = require('./controllers/ConstructionTypeContro
 const StoreController = require('./controllers/StoreController');
 const WebPayController = require('./controllers/WebPayController');
 const MembershipsController = require('./controllers/MembershipsController');
-const MembresiaPagadaController = require('./controllers/MembresiaPagadaController');
+const MembresiaPagadaController = require('./controllers/PaidMembershipsController');
 const NotificactionController = require('./controllers/NotificactionController');
 // Home
 router.get('/', (req, res) => res.json({
@@ -102,7 +102,7 @@ router.post('/api/membership/days', auth, MembershipsController.restDays);
 
 //#region membresias_pagadas
 router.post('/api/membership/paid/all', auth, MembresiaPagadaController.getAll);
-router.post('/api/membership/paid/store', auth, MembresiaPagadaController.store, MembershipsController.addDate, MembershipsController.upMembership, NotificactionController.sendNotification);
+router.post('/api/membership/paid/store', auth, MembresiaPagadaController.store, MembershipsController.addDate, MembershipsController.upMembership);
 //#endregion
 //#region Region
 router.get('/api/region/all', RegionController.getAll);

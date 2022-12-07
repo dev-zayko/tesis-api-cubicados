@@ -118,7 +118,12 @@ module.exports = (sequelize, DataTypes) => {
             },
             allowNull: false,
             defaultValue: 1
-        }
+        },
+        expire_at: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            defaultValue: null
+        },
     }, {
         timestamps: false,
         createdAt: false,

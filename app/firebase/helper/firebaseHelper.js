@@ -29,7 +29,7 @@ module.exports = {
 
                 }
             },
-            token: 'eEnzuHNWRXiRTIxtDFH8-c:APA91bG3sJkNSWfp3t1mQDdVZhxMQzvTBX-ndfjC5YzjB6LshnF1Ec9775E3ubgkirAvrokHIhNZhXyqgRw9bKQeBAceazKud54w4GPMB182t6BmQ9qvbZTOy3fxUsi6RFXHQWFUrll1'
+            token: req.headers.tokenDevice
         };
 
         adminFireBase.messaging().send(message)
