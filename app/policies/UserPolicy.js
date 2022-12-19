@@ -12,7 +12,12 @@ module.exports = {
             }, authConfig.secret, {
                 expiresIn: authConfig.expires
             });
-            verify = user.email_verified_at !== null;
+            if (user.email_verified_at === null || isNaN(user.email_verified_at)) {
+               verify = false;
+            } else {
+                verify = true;
+            }
+            console.log(verify)
             res.json({
                 status: 'isClient',
                 verified: verify,

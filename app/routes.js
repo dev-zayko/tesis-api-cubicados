@@ -24,6 +24,7 @@ router.get('/', (req, res) => res.json({
 //Middlewares
 const auth = require('./middlewares/Auth');
 const checkToken = require('./middlewares/CheckToken');
+const FirebaseService = require('./firebase/helper/firebaseHelper');
 
 //Permissions
 const proyectoPolicy = require('./policies/ProyectoPolicy');
@@ -46,10 +47,10 @@ router.put('/api/update/password', auth, AuthController.editPassword, AuthContro
 //#region Mail
 router.post('/api/mail/verification', AuthController.sendEmailVerification);
 router.post('/api/mail/passing', auth, AuthController.confirmEmail);
-router.post('/api/mail/status', UserPolicy.validateEmailVerify);
+router.post('/api/mail/status', auth, UserPolicy.validateEmailVerify);
 router.post('/api/mail/confirm', async (req, res) => {
     const token = req.body.token;
-    await axios.post('http://localhost:3030/api/mail/passing', {}, {
+    await axios.post('http://localhost:3131/api/mail/passing', {}, {
         headers: {Authorization: `Bearer ${token}`}
     }).then((response) => {
         if (response.data === 1) {
@@ -75,13 +76,17 @@ router.post('/api/project/store', auth, proyectoPolicy.add, ProjectsController.s
 router.post('/api/project/get', auth, ProjectsController.getById);
 router.put('/api/project/update', auth, ProjectsController.find, proyectoPolicy.management, ProjectsController.update);
 router.put('/api/project/delete', auth, ProjectsController.find, proyectoPolicy.management, ProjectsController.delete);
+router.post('/api/project/total', auth, ProjectsController.totalProjects);
 //#endregion
 
 //#region Cubicacion
+router.post('/api/cubage/charge', CubageController.chargeDataToPDF)
+router.post('/api/cubage/preference', auth, CubageController.preference);
 router.post('/api/cubage/store', auth, CubageController.store, RoomController.costAdjust, RoomController.getById, ProjectsController.find, ProjectsController.costAdjust);
 router.post('/api/cubage/get', auth, CubageController.getById);
 router.post('/api/cubage/police', auth, CubagePolicy.create);
 router.post('/api/cubage/delete', auth, CubageController.delete);
+router.post('/api/cubage/finalized', auth, CubageController.find, CubageController.updateFinalized);
 //#endregion
 
 //#region Habitacion
@@ -98,12 +103,18 @@ router.post('/api/materials/store', MaterialController.store);
 //#region Membresias
 router.get('/api/membership/all', MembershipsController.getAll);
 router.post('/api/membership/days', auth, MembershipsController.restDays);
+router.post('/api/membership/popular', MembershipsController.getPopularMemberships);
 //#endregion
 
 //#region membresias_pagadas
 router.post('/api/membership/paid/all', auth, MembresiaPagadaController.getAll);
-router.post('/api/membership/paid/store', auth, MembresiaPagadaController.store, MembershipsController.addDate, MembershipsController.upMembership);
+router.post('/api/membership/paid/store', auth, MembresiaPagadaController.store, MembershipsController.addDate, MembershipsController.upMembership, FirebaseService.initializeAppFirebase, FirebaseService.sendMessageToApp);
 //#endregion
+
+//#region Notification
+router.post('/api/notification', FirebaseService.initializeAppFirebase, FirebaseService.sendMessageToApp);
+//#endregion
+
 //#region Region
 router.get('/api/region/all', RegionController.getAll);
 router.get('/api/region/construmart', RegionController.getRegionConstrumart);
@@ -113,10 +124,12 @@ router.post('/api/city/sodimac', RegionController.getCiudadSodimac);
 
 //# region tienda
 router.get('/api/store/all', StoreController.getAll);
+router.post('/api/store/popular', StoreController.getPopularStores);
 //#enregion
 
 //#region TipoConstruccion
 router.get('/api/construction/type/all', ConstructionTypeController.getAll);
+router.post('/api/construction/type/popular', ConstructionTypeController.getCountConstruction);
 //#endregion
 
 //#region Scrap

@@ -33,7 +33,41 @@ module.exports = {
             res.sendStatus(500);
         });
 
-    }, async find(req, res, next) {
+    },
+    async totalProjects(req, res, next) {
+        try {
+            let total = 0;
+            const response = await Projects.findAll({
+                attributes: [
+                    'total_price'
+                ],
+                where: {
+                    id_user: req.user.id
+                }
+            });
+            if (response.length === 0) {
+                res.send({
+                    status: 'empty',
+                    data: 0
+                })
+            } else {
+                response.map(item => {
+                    total += parseInt(item.total_price)
+                })
+                res.send({
+                    status: 'success',
+                    data: total
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            res.send({
+                status: 'error',
+                data: 0
+            });
+        }
+    },
+    async find(req, res, next) {
 
         await Projects.findByPk(req.body.idProject, {
             where: {
@@ -88,7 +122,10 @@ module.exports = {
         await Projects.findAll({
             where: {
                 id_user: idUser, deleted: false
-            }
+            },
+            order: [
+                ['created_at', 'DESC'],
+            ],
         })
             .then((proyectos) => {
                 if (proyectos.length === 0) {
@@ -102,7 +139,7 @@ module.exports = {
                 }
             })
             .catch(err => {
-                res.status(500).send({
+                res.send({
                     error: err, message: 'Error al obtener proyecto asociado al Usuario con el id=' + idUsuario
                 });
             });

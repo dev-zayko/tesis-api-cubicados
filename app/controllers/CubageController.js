@@ -1,5 +1,6 @@
 const {
     Cubages,
+    Users,
     Sequelize,
     Rooms,
     Materials,
@@ -8,10 +9,55 @@ const {
     ConstructionType,
     Stores,
     Communes,
-    Regions
+    Regions,
+    sequelize
 } = require('../models/index')
 
 module.exports = {
+    async updateFinalized(req, res, next) {
+        let isFinalized = req.body.isFinalized;
+        console.log(req.cubage)
+        await req.cubage.update(
+            {
+                finalized: isFinalized
+            }
+        ).then((response) => {
+            res.send({
+                status: 'success',
+                data: response
+            })
+        }).catch((error) => {
+            console.log(error.message)
+            res.send({
+                status: 'error',
+                data: 0,
+                error: error.message
+            })
+        });
+    },
+    async preference(req, res, next) {
+        await sequelize.query('CALL get_count_stores_by_id_user(:idUser)',
+            {replacements: {idUser: req.user.id}})
+            .then((response) => {
+                if (response.length === 0) {
+                    res.send({
+                        status: 'empty',
+                        data: 0
+                    })
+                } else {
+                    res.send({
+                        status: 'success',
+                        data: response[0]
+                    })
+                }
+
+            }).catch(error =>
+                res.send({
+                    status: 'error',
+                    data: error.message
+                })
+            );
+    },
     async count(req, res, next) {
         let rooms = JSON.parse(req.rooms);
         let projectCount = req.projectCount;
@@ -41,18 +87,28 @@ module.exports = {
         });
     },
     async find(req, res, next) {
-        let cubage = await Cubages.findByPk(req.body.idCubages);
+        await Cubages.findOne(
+            {
+                where: {id: req.body.idCubages}
+            }
+        ).then((response) => {
+            if (response === null) {
+                res.status(404).json({
+                    msg: 'La Cubicacion no ha sido encontrado'
+                });
+            } else {
+                req.cubage = response;
+                next();
+            }
+        }).catch((error) => {
+            res.send({
+                error: error.message
+            })
+        });
 
-        if (cubage !== null) {
-            res.status(404).json({
-                msg: 'La Cubicacion no ha sido encontrado'
-            });
-        } else {
-            req.cubage = cubage;
-            next();
-        }
     },
     async store(req, res, next) {
+        console.log(req.body)
         await Cubages.create({
             area: req.body.area,
             depth: req.body.depth,
@@ -156,5 +212,74 @@ module.exports = {
                     msg: err
                 })
             })
-    }
+    },
+    async chargeDataToPDF(req, res) {
+        const idProject = req.body.idProject;
+        await Cubages.findAll({
+            include: [{
+                model: Materials,
+                as: 'materials',
+                required: true,
+                include: [{
+                    model: Stores,
+                    as: 'stores',
+                    required: true
+                },
+                {
+                    model: Communes,
+                    as: 'communes',
+                    required: true,
+                    include: [{
+                        model: Regions,
+                        as: 'regions',
+                        required: true
+                    }]
+                }
+                ],
+
+            }, {
+                model: Constructions,
+                as: 'constructions',
+                required: true,
+                include: [{
+                    model: ConstructionType,
+                    as: 'constructionType',
+                    required: true
+                }]
+            }, {
+                model: Rooms,
+                as: 'rooms',
+                required: true,
+                include: [{
+                    model: Projects,
+                    as: 'projects',
+                    required: true,
+                    where: {
+                        id: idProject
+                    },
+                }]
+            }]
+        })
+            .then(cubages => {
+                if (cubages.length === 0) {
+                    res.send({
+                        status: 'empty',
+                        data: 0,
+                        count: cubages.length
+                    })
+                } else {
+                    res.send({
+                        status: 'success',
+                        data: cubages,
+                        count: cubages.length
+                    });
+                }
+            })
+            .catch(error => {
+                res.send({
+                    error: error.message,
+                    message: 'Error al obtener la cubicación asociado a la Habitación con el id=' + idRoom
+                });
+            });
+    },
 };

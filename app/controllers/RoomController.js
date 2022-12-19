@@ -107,41 +107,48 @@ module.exports = {
             })
     },
     async store(req, res) {
-        const idProject = req.body.idProject;
-        let rooms = req.rooms;
-        let name;
-        rooms.map((item) => {
-            if (item.name !== req.body.name) {
-                name = req.body.name
-            } else {
-                name = 'duplicated';
-            }
-        });
-        name === 'duplicated' ? res.status(400).send({
-            status: name,
-            message: 'No pueden haber habitaciones con el mismo nombre'
-        }) :
-            await Rooms.create({
-                name: name,
-                project_id: idProject,
-                neto_amount: 0,
-                discount: 0,
-                deleted: false,
-
-            })
-                .then(response => {
-                    res.status(200).send({
-                        status: 'success',
-                        data: response
-                    })
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        error: err,
-                        message: 'Ha ocurrido un error en guardar la habitación'
-                    })
+        try {
+            const idProject = req.body.idProject;
+            let rooms = req.rooms;
+            let name = req.body.name;
+            if (rooms.length > 0) {
+                rooms.map((item) => {
+                    if (item.name !== name) {
+                        name = req.body.name
+                    } else {
+                        name = 'duplicated';
+                        console.log('duplicated')
+                    }
                 });
+            }
+            name === 'duplicated' ? res.send({
+                status: name,
+                data: 0,
+                message: 'No pueden haber habitaciones con el mismo nombre'
+            }) :
+                await Rooms.create({
+                    name: name,
+                    project_id: idProject,
+                    neto_amount: 0,
+                    discount: 0,
+                    deleted: false,
 
+                })
+                    .then(response => {
+                        res.status(200).send({
+                            status: 'success',
+                            data: response
+                        })
+                    });
+
+        } catch (error) {
+            console.log(error);
+            res.send({
+                error: error.message,
+                message: 'Ha ocurrido un error en guardar la habitación'
+            });
+
+        }
     },
     async delete(req, res) {
         req.habitacion.vigente = false;

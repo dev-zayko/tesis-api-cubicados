@@ -1,7 +1,20 @@
-const {Stores} = require('../models/index')
+const {Stores, sequelize} = require('../models/index')
 
 module.exports = {
-
+    async getPopularStores(req, res, next) {
+        await sequelize.query('CALL get_count_stores')
+            .then((response) => {
+                res.send({
+                    status: 'success',
+                    data: response
+                })
+            }).catch(error =>
+                res.send({
+                    status: 'error',
+                    data: error.message
+                })
+            );
+    },
     async getAll(req, res) {
         await Stores.findAll({
             where: {

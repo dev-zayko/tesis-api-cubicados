@@ -70,7 +70,7 @@ module.exports = {
                     items.forEach((item, index) => {
                         results.push({
                             linkProduct: item.querySelectorAll('.jsx-3128226947')[1].getAttribute('href'),
-                            tradeMark: item.querySelectorAll('.jsx-1327784995')[5].innerText,
+                            tradeMark: item.querySelectorAll('.jsx-1327784995')[5].innerText.replaceAll('-', ' ').toUpperCase(),
                             title: item.querySelectorAll('.jsx-1327784995')[7].innerText,
                             price: item.querySelectorAll('.jsx-1327784995')[9].children[0].innerText.replace('$ ', '$'),
                             image: item.querySelectorAll('.jsx-3128226947')[1].children[0].getAttribute('src'),
@@ -92,7 +92,7 @@ module.exports = {
                     items.forEach((item) => {
                         results.push({
                             linkProduct: url,
-                            tradeMark: item.querySelector('.jsx-1874573512.product-brand.fa--brand.false').innerText,
+                            tradeMark: item.querySelector('.jsx-1874573512.product-brand.fa--brand.false').innerText.replaceAll('-', ' ').toUpperCase(),
                             title: item.querySelector('.jsx-1442607798.product-name.fa--product-name.false').innerText,
                             price: item.querySelector('.jsx-2797633547.cmr-icon-container').innerText.replace('$ ', '$'),
                             image: item.querySelector('#testId-pod-image-SodimacCL_3316939_00')?.getAttribute('src'),
@@ -182,7 +182,7 @@ module.exports = {
                     let items = document.querySelectorAll('.vtex-search-result-3-x-galleryItem.vtex-search-result-3-x-galleryItem--small.pa4');
                     items.forEach((item) => {
                         let linkProduct = item.querySelector('.vtex-product-summary-2-x-clearLink.vtex-product-summary-2-x-clearLink--shelf-home-desktop.h-100.flex.flex-column').getAttribute('href');
-                        let tradeMark = item.querySelector('.vtex-product-summary-2-x-productBrandContainer').innerText;
+                        let tradeMark = item.querySelector('.vtex-product-summary-2-x-productBrandContainer').innerText.replaceAll('-', ' ').toUpperCase();
                         let title = item.querySelector('.vtex-product-summary-2-x-productNameContainer.mv0.vtex-product-summary-2-x-nameWrapper.overflow-hidden.c-on-base.f5').innerText;
                         let image = item.querySelector('.vtex-product-summary-2-x-imageNormal.vtex-product-summary-2-x-image').getAttribute('src');
                         let price = item.querySelector('.vtex-add-to-cart-button-0-x-buttonText').innerText === 'AGREGAR' ?

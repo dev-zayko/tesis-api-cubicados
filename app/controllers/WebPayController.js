@@ -1,6 +1,6 @@
 const WebpayPlus = require('transbank-sdk').WebpayPlus;
 const {
-    Paid_memberships
+    PaidMemberships
 } = require('../models/index');
 const {
     v1: uuidv1
@@ -8,7 +8,7 @@ const {
 module.exports = {
     async createTransaction(req, res, next) {
         try {
-            let buyOr = await Paid_memberships.findOne({
+            let buyOr = await PaidMemberships.findOne({
                 order: [
                     ['buy_order', 'DESC']
                 ]
@@ -66,6 +66,7 @@ module.exports = {
                 commitResponse,
             };
             step = "Confirmar Transacción";
+            console.log(viewData.commitResponse)
             res.render('voucher', {
                 viewData,
             });

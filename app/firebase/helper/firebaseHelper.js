@@ -17,27 +17,39 @@ module.exports = {
     },
     async sendMessageToApp(req, res, next) {
         const adminFireBase = req.admin;
-
+        let title, body;
+        switch (req.notify) {
+            case 'payment': {
+                title = 'Pago Realizado'
+                body = `Se ha realizado el pago de ${req.netoAmount}`
+                break;
+            }
+        }
         const message = {
             notification: {
-                title: 'Bienvenido Guapo',
-                body: 'Test'
+                title: title,
+                body: body
             },
             android: {
                 notification: {
                     channelId: '77195440',
-
                 }
             },
-            token: req.headers.tokenDevice
+            token: req.body.tokenDevice
         };
 
         adminFireBase.messaging().send(message)
-            .then((response) => {
-                console.log('Success', response);
-                next();
+            .then(() => {
+                res.send({
+                    status: 'success'
+                })
             }).catch((error) => {
-                console.log('Error ', error)
+                console.log('Error ', error);
+                res.send({
+                    status: 'error',
+                    error: error.message
+
+                })
             });
     }
 }

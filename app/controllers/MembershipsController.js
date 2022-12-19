@@ -1,22 +1,35 @@
 const {
     Memberships,
     Users,
-    PaidMemberships
+    PaidMemberships,
+    sequelize
 } = require('../models/index');
 const {
     Op
 } = require("sequelize");
-const {
-    response
-} = require('express');
 const moment = require('moment');
 
+
 module.exports = {
+    async getPopularMemberships(req, res, next) {
+        await sequelize.query('CALL get_count_memberships')
+            .then((response) => {
+                res.send({
+                    status: 'success',
+                    data: response
+                })
+            }).catch(error =>
+                res.send({
+                    status: 'error',
+                    data: error.message
+                })
+            );
+    },
     async getAll(req, res, next) {
         await Memberships.findAll({
             where: {
                 id: {
-                    [Op.gt]: 1,
+                    [Op.in]: [2, 3, 4]
                 },
                 deleted: false
             }
@@ -52,6 +65,7 @@ module.exports = {
             req.dateMemberships = moment(datemp.created_at, 'DD-MM-YYYY').add('days', date.days)
             next();
         } catch (error) {
+            console.log(error.message)
             res.send({
                 error: error.message
             })
@@ -68,14 +82,13 @@ module.exports = {
             where: {
                 id: idUser
             }
-        }).then((response) => {
-            res.send({
-                status: "success",
-                data: response
-            });
+        }).then(() => {
+            next();
         }).catch((err) => {
-            console.log(err);
-            res.sendStatus(500);
+            console.log(err.message);
+            res.send({
+                error: err.message
+            });
         });
     },
 

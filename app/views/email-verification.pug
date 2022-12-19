@@ -7,7 +7,7 @@ block body
             p
                 | Bienvenido #{name}, por favor confirma tu cuenta para tener accesso a más funcionalidades en cubicados.
             p   ¡Haz clic en el boton de abajo para unirte a la comunidad de constructores!
-            form(action="http://localhost:3030/api/mail/confirm", id='formEmail' method='post')
+            form(action=`https://www.cubicados.cl/registro/activarcuenta/${token}`, id='formEmail' method='get')
                 input(type='hidden', name='token', value=`${token}`)
                 button.button-28(role='button' type="submit") Verificar Email
             p(style='font-size: 15px;') Si tienes dudas consulta en nuestra la pagina

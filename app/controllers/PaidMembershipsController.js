@@ -10,7 +10,7 @@ module.exports = {
             attributes: [
                 'created_at',
                 'buy_order',
-                'neto_amount'
+                'neto_amount',
             ],
             include: [{
                 model: Memberships,
@@ -18,7 +18,8 @@ module.exports = {
                 required: true,
                 attributes: [
                     'name',
-                    'discount'
+                    'discount',
+                    'days'
                 ],
             }],
             where: {
@@ -46,8 +47,9 @@ module.exports = {
 
     async store(req, res, next) {
         let netoAmount = req.body.netoAmount;
-        let discount, finalAmount;
-        switch (req.body.idMemberships) {
+        let discount = 0;
+        let finalAmount = 0;
+        switch (req.body.idMembership) {
             case 2:
                 discount = 45
                 break;
@@ -60,7 +62,7 @@ module.exports = {
         }
         finalAmount = netoAmount - discount;
         await PaidMemberships.create({
-            membership_id: req.body.idMemberships,
+            membership_id: req.body.idMembership,
             user_id: req.user.id,
             neto_amount: netoAmount,
             discount: discount,
@@ -68,10 +70,11 @@ module.exports = {
             buy_order: req.body.buyOrder,
             session_id: req.body.sessionId
         }).then((response) => {
-            req.idMembership = req.body.idMemberships;
+            req.idMembership = req.body.idMembership;
             req.idPaidMembership = response.dataValues.id;
             req.buyOrder = req.body.buyOrder;
             req.netoAmount = netoAmount;
+            req.notify = 'payment';
             next();
         }).catch((err) => {
             console.log(err);

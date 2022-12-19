@@ -6,13 +6,9 @@ const {
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authConfig = require('../../config/AuthConfig')
-const {
-    Proyecto
-} = require("../models");
-
 const transporter = require('../utils/Mailer');
 const pug = require("pug");
-const {response} = require("express");
+const {uuid} = require('uuidv4');
 
 
 module.exports = {
@@ -37,8 +33,9 @@ module.exports = {
         })
             .then(user => {
                 if (!user) {
-                    res.status(404).json({
-                        msg: 'Usuario no encontrado'
+                    res.send({
+                        status: 'empty',
+                        data: 0
                     })
                 } else {
                     bcrypt.compare(req.body.password, user.password, (err, data) => {
@@ -58,7 +55,7 @@ module.exports = {
                                     }, authConfig.secret, {
                                         expiresIn: authConfig.expires
                                     });
-                                    if (user.email_verified_at === null) {
+                                    if (user.email_verified_at === null || isNaN(user.email_verified_at)) {
                                         verified = false
                                     } else {
                                         verified = true
@@ -215,15 +212,24 @@ module.exports = {
     },
     async sendEmailVerification(req, res, next) {
         try {
+            const uuidV4 = uuid();
+            const userSearch = await Users.update({
+                email_token: uuidV4,
+            }, {
+                where: {
+                    email: req.body.email
+                }
+            });
+            console.log(userSearch)
             await transporter.sendMail({
                 from: 'Cubicados Verificación <notificaciones@cubicados.cl>',
                 to: req.body.email,
                 subject: 'Verifica tu cuenta',
-                html: pug.renderFile('app/views/email-verification.pug', {name: req.body.name, token: req.body.token}),
+                html: pug.renderFile('app/views/email-verification.pug', {name: req.body.name, token: uuidV4}),
             });
             res.sendStatus(200);
         } catch (error) {
-            console.log(error)
+            console.log(error.message)
         }
 
     },
