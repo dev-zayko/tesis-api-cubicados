@@ -255,7 +255,8 @@ module.exports = {
                     as: 'projects',
                     required: true,
                     where: {
-                        id: idProject
+                        id: idProject,
+                        id_user: req.user.id
                     },
                 }]
             }]

@@ -5,6 +5,7 @@ const construmartCookie = require('./Cookies/ConstrumartCookie');
 const SodimacCookie = require('./Cookies/SodimacCookie');
 const puppeteer = require('puppeteer');
 const _ = require("underscore");
+const EasyCookie = require('./Cookies/EasyCookie');
 
 module.exports = {
     async tipoProductos(req, res, next) {
@@ -225,5 +226,51 @@ module.exports = {
                 error: error.message
             })
         }
+    },
+    async scrapProductoEasy(req, res, next) {
+      try {
+        const browser = await puppeteer.launch({
+            "headless": false
+        });
+        let dataProduct = [];
+        let url = process.env.EASY_CEMENTO_URL;
+        const page = await browser.newPage();
+        await page.goto(url);
+        let region = 'Metropolitana de Santiago'
+        let city = '';
+        await page.waitForTimeout(6000);
+        let ec = new EasyCookie(region);
+        await page.waitForTimeout(6000);
+        await page.setCookie(...await ec.init());
+        await page.waitForTimeout(6000);
+        await page.goto(url);
+        await page.waitForTimeout(6000);
+        await page.cookies(url);
+        await page.waitForTimeout(6000);
+        dataProduct = await page.evaluate(async (region, city) => {
+            let results = [];
+            let items = document.querySelectorAll('.vtex-product-summary-2-x-element.vtex-product-summary-2-x-element--gridLayout.pointer.pt3.pb4.flex.flex-column.h-100');
+            items.forEach((item) => {
+               results.push({
+                linkProduct: 'https://www.easy.cl' + item.parentElement.getAttribute('href'),
+                 trademark:  item.querySelector('.vtex-store-components-3-x-productBrandContainer.vtex-store-components-3-x-productBrandContainer--summaryBrandDesktop').innerText,
+                 title: item?.querySelector('.vtex-product-summary-2-x-nameContainer.vtex-product-summary-2-x-nameContainer--summaryName.flex.items-start.justify-center.pv6').innerText,
+                 image: item?.querySelectorAll('.dib.relative.vtex-product-summary-2-x-imageContainer.vtex-product-summary-2-x-imageStackContainer')[0].children[0].getAttribute('src'),
+                 price: item.querySelector('.easycl-precio-cencosud-0-x-defaultHeight').innerText,
+                 store: 'Easy',
+            });
+        });
+            return results
+        }, region, city);
+        res.json({
+            status: 'success',
+            data: dataProduct
+        });
+      } catch (error) {
+        res.send({
+            status: 'success',
+            data: error.message
+        });
+      }
     }
 }

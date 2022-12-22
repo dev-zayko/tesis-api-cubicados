@@ -150,6 +150,43 @@ module.exports = {
 
         }
     },
+    async update(req, res) {
+
+        const response = await Rooms.findOne({where: {name: req.body.name, project_id: req.body.idProject, deleted: false}});
+        if (response === null) {
+            await Rooms.update({
+                name: req.body.name
+            }, {
+                where: {id: req.body.idRoom}
+            })
+                .then(room => {
+                    if (!room) {
+                        res.send({
+                            status: 'error',
+                            message: 'No se puede actualizar la habitación'
+                        });
+                    } else {
+                        res.send({
+                            status: 'success',
+                            message: 'La habitación ha sido actualizada',
+                            data: room
+                        });
+                    }
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        status: 'error',
+                        error: err.message,
+                        message: 'Error al actualizar la habitación con el id=' + req.room.idRoom
+                    })
+                })
+        } else {
+            res.send({
+                status: 'duplicated',
+                data: req.body.name
+            })
+        }
+    },
     async delete(req, res) {
         req.habitacion.vigente = false;
         req.habitacion.save().then(habitacion => {

@@ -1,7 +1,8 @@
 const {
     Users,
     Memberships,
-    UserStatus
+    UserStatus,
+    UserLogins
 } = require('../models/index')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -15,6 +16,7 @@ module.exports = {
     //Inicio de sesión
     async login(req, res, next) {
         //Buscar usuario
+
         await Users.findOne({
             include: [{
                 model: Memberships,
@@ -49,6 +51,15 @@ module.exports = {
                                     })
                                     break;
                                 case 2:
+                                    UserLogins.create({
+                                        user_id: user.id,
+                                        ip: req.body.ip,
+                                        user_agent: req.body.userAgent,
+                                        type_of_device: 'Mobile',
+                                        browser_name: 'Aplication Cubicados',
+                                        operating_system: 'Android ' + req.body.systemVersion,
+                                        device_name: req.body.deviceName
+                                    });
                                     let verified;
                                     let token = jwt.sign({
                                         user: user

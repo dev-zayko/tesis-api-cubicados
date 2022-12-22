@@ -80,7 +80,7 @@ router.post('/api/project/total', auth, ProjectsController.totalProjects);
 //#endregion
 
 //#region Cubicacion
-router.post('/api/cubage/charge', CubageController.chargeDataToPDF)
+router.post('/api/cubage/charge', auth, CubageController.chargeDataToPDF)
 router.post('/api/cubage/preference', auth, CubageController.preference);
 router.post('/api/cubage/store', auth, CubageController.store, RoomController.costAdjust, RoomController.getById, ProjectsController.find, ProjectsController.costAdjust);
 router.post('/api/cubage/get', auth, CubageController.getById);
@@ -93,6 +93,7 @@ router.post('/api/cubage/finalized', auth, CubageController.find, CubageControll
 router.post('/api/room/store', auth, HabitacionPolicy.userAuth, HabitacionPolicy.add, RoomController.getById, RoomController.store);
 router.post('/api/room/get', auth, RoomController.getById);
 router.put('/api/room/delete', auth, RoomController.delete);
+router.put('/api/room/update', auth, RoomController.update);
 //#endregion
 
 
@@ -135,6 +136,7 @@ router.post('/api/construction/type/popular', ConstructionTypeController.getCoun
 //#region Scrap
 router.post('/api/scrap/sodimac/product', auth, Scraping.tipoProductos, Scraping.scrapProductoSodimac);
 router.post('/api/scrap/construmart/product', auth, Scraping.tipoProductos, Scraping.scrapProductoConstrumart);
+router.post('/api/scrap/easy/product', Scraping.scrapProductoEasy);
 //#endregion
 
 //#region count
