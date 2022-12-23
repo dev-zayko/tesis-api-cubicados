@@ -58,6 +58,26 @@ module.exports = {
             })
         })
     },
+    async restCostAdjust(req, res, next) {
+        try {
+            let project = req.project;
+            let totalPrice = parseInt(project.total_price);
+            let room = parseInt(req.room.final_amount);
+            let resultRest = (totalPrice - room);
+            project.total_price = resultRest;
+            project.save();
+            res.send({
+                status: 'success',
+                data: project,
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.send({
+                status: 'error',
+                error: error.message
+            })
+        }
+    },
     async getById(req, res, next) {
         const idProject = req.body.idProject;
         const action = req.body.action;
@@ -152,8 +172,8 @@ module.exports = {
     },
     async update(req, res) {
 
-        const response = await Rooms.findOne({where: {name: req.body.name, project_id: req.body.idProject, deleted: false}});
-        if (response === null) {
+        const roomFind = await Rooms.findOne({where: {name: req.body.name, project_id: req.body.idProject, deleted: false}});
+        if (roomFind === null) {
             await Rooms.update({
                 name: req.body.name
             }, {
@@ -187,18 +207,33 @@ module.exports = {
             })
         }
     },
-    async delete(req, res) {
-        req.habitacion.vigente = false;
-        req.habitacion.save().then(habitacion => {
-            res.status(200).send({
-                msg: `La Habitación con nombre ${habitacion.nombre} ha sido deshabilitado `
-            });
-        })
-            .catch(err => {
-                res.status(500).send({
-                    error: err,
-                    message: 'Error al borrar'
-                });
-            });
+    async delete(req, res, next) {
+        try {
+            let idRoom = req.body.idRoom;
+            const roomFind = await Rooms.findOne({where: {id: idRoom, deleted: false}});
+            if (roomFind !== null) {
+                roomFind.deleted = true;
+                roomFind.save().then(response => {
+                    req.room = roomFind
+                    next();
+                })
+                    .catch(err => {
+                        res.status(500).send({
+                            error: err,
+                            message: 'Error al borrar'
+                        });
+                    });
+            } else {
+                res.send({
+                    status: 'error',
+                    error: 'No se encontro la habtiación'
+                })
+            }
+        } catch (error) {
+            res.send({
+                status: 'error',
+                error: error.message
+            })
+        }
     }
 }

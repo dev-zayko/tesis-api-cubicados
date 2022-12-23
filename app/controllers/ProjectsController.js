@@ -80,7 +80,7 @@ module.exports = {
                         msg: 'El proyecto no ha sido encontrado'
                     });
                 } else {
-                    req.roomsCostTotal = req.roomsCostTotal;
+                    req.roomsCostTotal = req?.roomsCostTotal;
                     req.project = projects;
                     next();
                 }

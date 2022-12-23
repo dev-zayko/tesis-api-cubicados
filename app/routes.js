@@ -92,7 +92,7 @@ router.post('/api/cubage/finalized', auth, CubageController.find, CubageControll
 //#region Habitacion
 router.post('/api/room/store', auth, HabitacionPolicy.userAuth, HabitacionPolicy.add, RoomController.getById, RoomController.store);
 router.post('/api/room/get', auth, RoomController.getById);
-router.put('/api/room/delete', auth, RoomController.delete);
+router.put('/api/room/delete', auth, ProjectsController.find, RoomController.delete, RoomController.restCostAdjust);
 router.put('/api/room/update', auth, RoomController.update);
 //#endregion
 
