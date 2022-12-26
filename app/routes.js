@@ -80,7 +80,7 @@ router.post('/api/project/total', auth, ProjectsController.totalProjects);
 //#endregion
 
 //#region Cubicacion
-router.post('/api/cubage/charge', auth, CubageController.chargeDataToPDF)
+router.post('/api/cubage/charge', auth, CubageController.chargeDataToPDF);
 router.post('/api/cubage/preference', auth, CubageController.preference);
 router.post('/api/cubage/store', auth, CubageController.store, RoomController.costAdjust, RoomController.getById, ProjectsController.find, ProjectsController.costAdjust);
 router.post('/api/cubage/get', auth, CubageController.getById);

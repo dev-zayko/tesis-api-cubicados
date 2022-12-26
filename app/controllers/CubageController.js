@@ -200,8 +200,39 @@ module.exports = {
             });
     },
     async delete(req, res, next) {
-        req.cubage.deleted = true;
-        req.cubage.save().then(() => {
+        try {
+            let idMaterial = req.body.idMaterial;
+            let idRoom = req.body.idRoom;
+            let idProject = req.body.idProject;
+            let idCubage = req.body.idCubage;
+
+            const cubageFind = await Cubages.findOne({where: {id: idCubage}});
+            const roomFind = await Rooms.findOne({where: {id: idRoom}});
+            const projectFind = await Projects.findOne({where: {id: idProject}});
+            const materialFind = await Materials.findOne({where: {id: idMaterial}});
+            console.log(projectFind)
+            let totalMaterial = materialFind.price * cubageFind.count;
+            let roomCostRest = roomFind.neto_amount - totalMaterial;
+            let projectCostRest = projectFind.total_price - totalMaterial;
+            roomFind.neto_amount = roomCostRest;
+            roomFind.final_amount = roomCostRest;
+            projectFind.total_price = projectCostRest;
+            cubageFind.deleted = true;
+            roomFind.save();
+            projectFind.save();
+            cubageFind.save();
+            res.send({
+                status: 'success',
+            })
+        } catch (error) {
+            console.log(error.message);
+            res.send({
+                status: 'error',
+                error: error.message
+            });
+        }
+        //req.cubage.deleted = true;
+        /**req.cubage.save().then(() => {
             res.send({
                 msg: `La cubicación ha sido deshabilitada`
             });
@@ -211,7 +242,7 @@ module.exports = {
                 res.json({
                     msg: err
                 })
-            })
+            })**/
     },
     async chargeDataToPDF(req, res) {
         const idProject = req.body.idProject;
