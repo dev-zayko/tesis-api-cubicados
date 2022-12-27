@@ -179,6 +179,7 @@ module.exports = {
             } else {
                 verified = true
             }
+            console.log('success')
             res.json({
                 status: 'isClient',
                 verified: verified,
@@ -206,19 +207,50 @@ module.exports = {
         });
     },
     async editPassword(req, res, next) {
-        let password = bcrypt.hashSync(req.body.passwordMatch, Number.parseInt(authConfig.rounds));
-        await Users.update({
-            password: password,
-        }, {
-            where: {
-                id: req.user.id
+        await Users.findOne({
+            include: [{
+                model: Memberships,
+                as: 'memberships',
+                required: true
+            },
+            {
+                model: UserStatus,
+                as: 'user_status',
+                required: true
             }
-        }).then((response) => {
-            next();
-        }).catch((err) => {
-            console.log(err);
-            res.sendStatus(500);
-        });
+            ],
+            where: {
+                email: req.user.email
+            },
+        })
+            .then(user => {
+                bcrypt.compare(req.body.oldPassword.toString(), user.password, (err, data) => {
+                    if (err) {res.send(err.message)};
+                    if (data) {
+                        let password = bcrypt.hashSync(req.body.newPassword, Number.parseInt(authConfig.rounds));
+                        Users.update({
+                            password: password,
+                        }, {
+                            where: {
+                                id: req.user.id
+                            }
+                        }).then((response) => {
+                            next();
+                        }).catch((err) => {
+                            console.log(err);
+                            res.sendStatus(500);
+                        });
+                    } else {
+                        res.send({
+                            status: 'incorrect',
+                            msg: 'Contraseña Incorrecta'
+                        })
+                    }
+                });
+            }).catch(error => {
+                console.log(error);
+                res.sendStatus(500);
+            });
 
     },
     async sendEmailVerification(req, res, next) {
