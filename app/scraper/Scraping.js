@@ -83,6 +83,7 @@ module.exports = {
                     return results;
                 }, region, city);
                 res.json({
+                    status: 'success',
                     data: dataProduct
                 });
             };
@@ -96,7 +97,7 @@ module.exports = {
                             tradeMark: item.querySelector('.jsx-1874573512.product-brand.fa--brand.false').innerText.replaceAll('-', ' ').toUpperCase(),
                             title: item.querySelector('.jsx-1442607798.product-name.fa--product-name.false').innerText,
                             price: item.querySelector('.jsx-2797633547.cmr-icon-container').innerText.replace('$ ', '$'),
-                            image: item.querySelector('#testId-pod-image-SodimacCL_3316939_00')?.getAttribute('src'),
+                            image: item.querySelectorAll('.jsx-4112511439.image-headline')[1]?.children[0]?.getAttribute('src'),
                             store: 'Sodimac',
                             region: region,
                             city: city
@@ -104,7 +105,7 @@ module.exports = {
                     });
                     return results;
                 }, url, region, city);
-
+               
                 if (Object.keys(dataProduct[0]).length === 7) {
                     res.json({
                         status: 'empty',

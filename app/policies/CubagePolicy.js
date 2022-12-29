@@ -1,16 +1,16 @@
 const {
-    Cubicacion
+    Cubages,
 } = require('../models/index');
 
 module.exports = {
     async create(req, res, next) {
-        await Cubicacion.findAll({
+        await Cubages.findAll({
             where: {
-                idHabitacion: req.body.idHabitacion
-            }
+                room_id : req.body.idRoom
+                        }
         }).then((response) => {
-            if (req.user.idMembresia > 1) {
-                if(req.user.idEstadoUsuario === 2) {
+            if (req.user.membership_id > 1) {
+                if(req.user.user_status_id === 2) {
                     if (response.length < 2) {
                         res.send({
                             status: 'success'

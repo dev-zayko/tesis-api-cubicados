@@ -108,7 +108,6 @@ module.exports = {
 
     },
     async store(req, res, next) {
-        console.log(req.body)
         await Cubages.create({
             area: req.body.area,
             depth: req.body.depth,
