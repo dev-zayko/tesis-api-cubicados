@@ -15,8 +15,15 @@ module.exports = (req, res, next) => {
                 Users.findByPk(
                     decoded.user.id)
                     .then(user => {
-                        req.user = user;
-                        next();
+                        if(user.user_status_id > 1) {
+                            res.send({
+                                status: 'error',
+                                msg: 'Tu cuenta no esta activa'
+                            });
+                        } else {
+                            req.user = user;
+                            next();
+                        }
                     })
             }
         })
